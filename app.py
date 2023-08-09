@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 import psycopg2
 
 app = Flask(__name__)
@@ -26,7 +26,7 @@ def hello_world():  # put application's code here
     return 'Hello World!'
 
 
-@app.route('/get_customer', methods=['GET'])
+@app.route('/get_customers', methods=['GET'])
 def get_customers():
     connection = create_connection()
     if connection is None:
@@ -56,14 +56,15 @@ def get_customers():
 
 @app.route('/create_customer', methods=['POST'])
 def create_customer():
+    connection = create_connection()
+    if connection is None:
+        return jsonify({"error": "unable to connect to the database"}), 500
+
     try:
         data = request.get_json()
         first_name = data.get('first_name')
-        last_name = date.get('last_name')
+        last_name = data.get('last_name')
     
-        connection = create_connection()
-        if connection is None:
-            return jsonify({"error": "unable to connect to the database"}), 500
 
         with connection.cursor() as cursor:
             query = "INSERT INTO customer (first_name, last_name) VALUES (%s, %s) RETURNING customer_id;"

@@ -1,7 +1,8 @@
 import requests
 import sys
+import random
 
-API_URL = 'http://192.168.56.103:5000/create_customer'
+API_URL = 'http://127.0.0.1:5000/create_customer'
 
 FIRST_NAMES = [
     "Bubba",
@@ -39,7 +40,8 @@ def generate_customer_data():
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 1:
+    print(len(sys.argv))
+    if len(sys.argv) <= 1:
         count = 1
     else:
         count = sys.argv[1]
