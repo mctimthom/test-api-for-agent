@@ -48,11 +48,12 @@ if __name__ == '__main__':
 
     for _ in range(count):
         actor_data = generate_actor_data()
-        success, response = requests.post(API_URL, json=actor_data)
+        response = requests.post(API_URL, json=actor_data)
         if response.status_code == 201:
             print("created actor")
             print(response.json())
         else:
+            print(response.status_code)
             print("failed to create actor")
             print(response.text)
             break

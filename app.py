@@ -34,20 +34,20 @@ def get_actors():
 
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM customer;")
-            customers = cursor.fetchall()
+            cursor.execute("SELECT * FROM actor;")
+            actors = cursor.fetchall()
 
-            customer_list = []
-            for customer in customers:
-                customer_data = {
-                    "actor_id": customer[0],
-                    "first_name": customer[1],
-                    "last_name": customer[2],
-                    "last_update": customer[3]
+            actor_list = []
+            for actor in actors:
+                actor_data = {
+                    "actor_id": actor[0],
+                    "first_name": actor[1],
+                    "last_name": actor[2],
+                    "last_update": actor[3]
                 }
-                customer_list.append(customer_data)
+                actor_list.append(actor_data)
 
-            return jsonify({"actors": customer_list})
+            return jsonify({"actors": actor_list})
     except psycopg2.Error as e:
         print(f"Error retrieving data from the database: {e}")
         return jsonify({"error": "error retrieving data from the database"}), 500
