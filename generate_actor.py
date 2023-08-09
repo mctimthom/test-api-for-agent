@@ -2,7 +2,7 @@ import requests
 import sys
 import random
 
-API_URL = 'http://127.0.0.1:5000/create_customer'
+API_URL = 'http://127.0.0.1:5000/create_actor'
 
 FIRST_NAMES = [
     "Bubba",
@@ -31,7 +31,7 @@ LAST_NAMES = [
 ]
 
 
-def generate_customer_data():
+def generate_actor_data():
     return {
         "first_name": random.choice(FIRST_NAMES),
         "last_name": random.choice(LAST_NAMES)
@@ -47,12 +47,12 @@ if __name__ == '__main__':
         count = sys.argv[1]
 
     for _ in range(count):
-        customer_data = generate_customer_data()
-        success, response = requests.post(API_URL, json=customer_data)
+        actor_data = generate_actor_data()
+        success, response = requests.post(API_URL, json=actor_data)
         if response.status_code == 201:
-            print("created customer")
+            print("created actor")
             print(response.json())
         else:
-            print("failed to create customer")
+            print("failed to create actor")
             print(response.text)
             break

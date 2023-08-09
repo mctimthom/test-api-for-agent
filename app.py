@@ -26,8 +26,8 @@ def hello_world():  # put application's code here
     return 'Hello World!'
 
 
-@app.route('/get_customers', methods=['GET'])
-def get_customers():
+@app.route('/get_actors', methods=['GET'])
+def get_actors():
     connection = create_connection()
     if connection is None:
         return jsonify({"error": "unable to connect to the database"}), 500
@@ -40,13 +40,14 @@ def get_customers():
             customer_list = []
             for customer in customers:
                 customer_data = {
-                    "customer_id": customer[0],
+                    "actor_id": customer[0],
                     "first_name": customer[1],
-                    "last_name": customer[2]
+                    "last_name": customer[2],
+                    "last_update": customer[3]
                 }
                 customer_list.append(customer_data)
 
-            return jsonify({"customers": customer_list})
+            return jsonify({"actors": customer_list})
     except psycopg2.Error as e:
         print(f"Error retrieving data from the database: {e}")
         return jsonify({"error": "error retrieving data from the database"}), 500
@@ -54,8 +55,8 @@ def get_customers():
         connection.close()
 
 
-@app.route('/create_customer', methods=['POST'])
-def create_customer():
+@app.route('/create_actor', methods=['POST'])
+def create_actor():
     connection = create_connection()
     if connection is None:
         return jsonify({"error": "unable to connect to the database"}), 500
@@ -64,18 +65,17 @@ def create_customer():
         data = request.get_json()
         first_name = data.get('first_name')
         last_name = data.get('last_name')
-    
 
         with connection.cursor() as cursor:
-            query = "INSERT INTO customer (first_name, last_name) VALUES (%s, %s) RETURNING customer_id;"
+            query = "INSERT INTO actor (first_name, last_name) VALUES (%s, %s) RETURNING actor_id;"
             cursor.execute(query, (first_name, last_name))
-            new_customer_id = cursor.fetchone()[0]
+            new_actor_id = cursor.fetchone()[0]
             connection.commit()
 
-        return jsonify({"message": f"Customer {new_customer_id} created successfullly"}), 201
+        return jsonify({"message": f"Actor {new_actor_id} created successfullly"}), 201
     except psycopg2.Error as e:
-        print(f"Error creating customer: {e}")
-        return jsonify({"error": "failed to create customer"}), 500
+        print(f"Error creating actor: {e}")
+        return jsonify({"error": "failed to create actor"}), 500
     finally:
         connection.close()
 
