@@ -5,8 +5,7 @@ app = Flask(__name__)
 
 DB_HOST = 'localhost'
 DB_NAME = 'pagila'
-DB_USER = 'your_username'
-DB_PASSWORD = ''
+DB_USER = 'timthom'
 
 
 def create_connection():
@@ -14,8 +13,7 @@ def create_connection():
         connection = psycopg2.connect(
             host=DB_HOST,
             database=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD
+            user=DB_USER
         )
         return connection
     except psycopg2.Error as e:
@@ -28,7 +26,7 @@ def hello_world():  # put application's code here
     return 'Hello World!'
 
 
-@app.route('/customers', methods=['GET'])
+@app.route('/get_customer', methods=['GET'])
 def get_customers():
     connection = create_connection()
     if connection is None:
@@ -56,5 +54,31 @@ def get_customers():
         connection.close()
 
 
+@app.route('/create_customer', methods=['POST'])
+def create_customer():
+    try:
+        data = request.get_json()
+        first_name = data.get('first_name')
+        last_name = date.get('last_name')
+    
+        connection = create_connection()
+        if connection is None:
+            return jsonify({"error": "unable to connect to the database"}), 500
+
+        with connection.cursor() as cursor:
+            query = "INSERT INTO customer (first_name, last_name) VALUES (%s, %s) RETURNING customer_id;"
+            cursor.execute(query, (first_name, last_name))
+            new_customer_id = cursor.fetchone()[0]
+            connection.commit()
+
+        return jsonify({"message": f"Customer {new_customer_id} created successfullly"}), 201
+    except psycopg2.Error as e:
+        print(f"Error creating customer: {e}")
+        return jsonify({"error": "failed to create customer"}), 500
+    finally:
+        connection.close()
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
